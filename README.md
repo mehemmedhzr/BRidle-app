@@ -9,7 +9,6 @@
 - 🎨 Color-coded tile feedback (green/yellow/gray)
 - 🚫 Wrong letters struck through on keyboard
 - 🕹 Shake animation for invalid attempts
-- 🌙 Dark mode support
 - 🔔 Toast notifications for game status (win/lose/incomplete)
 - 📱 Mobile responsive
 
