@@ -25,7 +25,7 @@
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-username/briddle.git
+git clone https://github.com/mehemmedhzr/briddle.git
 cd briddle
 npm install
 npm run dev
