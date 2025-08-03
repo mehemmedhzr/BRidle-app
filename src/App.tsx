@@ -13,7 +13,7 @@ const KEYBOARD_LETTERS = {
 
 function App() {
 
-  const [solution, setSolution] = useState<string>('crane');
+  const [solution, setSolution] = useState<string>('');
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>('');
   const [gameOver, setGameOver] = useState<boolean>(false);
@@ -23,7 +23,8 @@ function App() {
 
   const processInput = useCallback((inputKey: string) => {
     console.log(1212);
-
+    console.log(inputKey);
+    console.log(solution);
     if (gameOver) return;
   
     if (inputKey.length === 1 && /^[a-z]$/i.test(inputKey)) {
@@ -72,6 +73,15 @@ function App() {
   
   const handleButtonClick = useCallback((key: string) => processInput(key), [processInput]);
   
+  useEffect(() => {
+    const fetchSolution = async () => {
+      const response = await fetch('http://localhost:3001/api/words/random/word');
+      const data = await response.json();
+      console.log(data);
+      setSolution(data.data.word);
+    }
+    fetchSolution();
+  }, []);
   
   useEffect(() => {
     window.addEventListener('keyup', handleKeyUp);
@@ -152,7 +162,7 @@ function App() {
 
   return (
     <>
-      <div className="bg-white dark:bg-[#121213]">
+      <div className="bg-white">
         <div className="max-w-md md:max-w-lg mx-auto">
           <div className="flex justify-center mb-4">
             <h1 className="text-2xl font-bold">BRiddle</h1>
@@ -170,7 +180,7 @@ function App() {
                       [...Array(solution.length)].map((_, index) => {
 
                         return (
-                          <div key={index} className={`w-10 h-10 flex items-center justify-center uppercase font-bold text-black border border-[#D3D6DA] dark:bg-[#121213] dark:text-white dark:border-[#3A3A3C]  ${getTileStatus(index, parentIndex)}`}>
+                          <div key={index} className={`w-10 h-10 flex items-center justify-center uppercase font-bold text-black border border-[#D3D6DA]  ${getTileStatus(index, parentIndex)}`}>
                             {guess[index]}
                           </div>
                         )
@@ -187,7 +197,7 @@ function App() {
               {
                 KEYBOARD_LETTERS.KEYBOARD_LETTERS_ROW_1.map((letter) => {
                   return (
-                    <button onClick={() => handleButtonClick(letter)} key={letter} className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-7.5 md:w-10 h-11 md:h-14 text-sm md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA] dark:bg-[#121213] dark:text-white dark:border-[#3A3A3C]`}>
+                    <button onClick={() => handleButtonClick(letter)} key={letter} className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-7.5 md:w-10 h-11 md:h-14 text-sm md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA]`}>
                       {letter}
                     </button>
                   )
@@ -199,7 +209,7 @@ function App() {
               {
                 KEYBOARD_LETTERS.KEYBOARD_LETTERS_ROW_2.map((letter) => {
                   return (
-                    <button onClick={() => handleButtonClick(letter)} key={letter} className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-7.5 md:w-10 h-11 md:h-14 text-sm md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA] dark:bg-[#121213] dark:text-white dark:border-[#3A3A3C]`}>
+                    <button onClick={() => handleButtonClick(letter)} key={letter} className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-7.5 md:w-10 h-11 md:h-14 text-sm md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA]`}>
                       {letter}
                     </button>
                   )
@@ -208,19 +218,19 @@ function App() {
             </div>
 
             <div className="flex justify-center gap-1.5 md:gap-2 flex-wrap">
-              <button onClick={() => handleButtonClick('Enter')} className="w-12 md:w-16 h-11 md:h-14 text-sm md:text-md flex items-center justify-center text-black border bg-gray-200 border-[#D3D6DA] dark:bg-[#121213] dark:text-white dark:border-[#3A3A3C]">
+              <button onClick={() => handleButtonClick('Enter')} className="w-12 md:w-16 h-11 md:h-14 text-sm md:text-md flex items-center justify-center text-black border bg-gray-200 border-[#D3D6DA]">
                 Enter
               </button>
               {
                 KEYBOARD_LETTERS.KEYBOARD_LETTERS_ROW_3.map((letter) => {
                   return (
-                    <button onClick={() => handleButtonClick(letter)} key={letter} className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-7.5 md:w-10 h-11 md:h-14 text-sm md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA] dark:bg-[#121213] dark:text-white dark:border-[#3A3A3C]`}>
+                    <button onClick={() => handleButtonClick(letter)} key={letter} className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-7.5 md:w-10 h-11 md:h-14 text-sm md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA]`}>
                       {letter}
                     </button>
                   )
                 })
               }
-              <button onClick={() => handleButtonClick('Backspace')} className="w-12 md:w-16 h-11 md:h-14 text-sm md:text-md flex items-center justify-center text-black border bg-gray-200 border-[#D3D6DA] dark:bg-[#121213] dark:text-white dark:border-[#3A3A3C]">
+              <button onClick={() => handleButtonClick('Backspace')} className="w-12 md:w-16 h-11 md:h-14 text-sm md:text-md flex items-center justify-center text-black border bg-gray-200 border-[#D3D6DA]">
                 <Delete size={20} />
               </button>
             </div>
