@@ -40,7 +40,10 @@ app.get('/api/words/:id', (req, res) => {
 });
 
 // GET random word
-app.get('/api/words/random/word', (req, res) => {
+app.get('/api/words/random/word/:lang', (req, res) => {
+  const language = req.params.lang.slice(1, 3);
+  wordCollection = getWordCollection(language);
+
   const randomIndex = Math.floor(Math.random() * wordCollection.length);
   const randomWord = wordCollection[randomIndex];
   console.log(randomWord);
@@ -50,30 +53,6 @@ app.get('/api/words/random/word', (req, res) => {
       word: randomWord.word,
       id: randomWord.id
     }
-  });
-});
-
-// GET words by difficulty
-app.get('/api/words/difficulty/:level', (req, res) => {
-  const difficulty = req.params.level.toLowerCase();
-  const filteredWords = wordCollection.filter(w => w.difficulty === difficulty);
-  
-  res.json({
-    success: true,
-    data: filteredWords,
-    count: filteredWords.length
-  });
-});
-
-// GET words by category
-app.get('/api/words/category/:category', (req, res) => {
-  const category = req.params.category.toLowerCase();
-  const filteredWords = wordCollection.filter(w => w.category === category);
-  
-  res.json({
-    success: true,
-    data: filteredWords,
-    count: filteredWords.length
   });
 });
 
@@ -110,6 +89,18 @@ app.get('/api/words/:language/:length', (req, res) => {
   });
 });
 
+// GET available languages
+app.get('/api/collections/languages', (req, res) => {
+  const collections = getAvailableCollections();
+  const languages = new Set();
+  collections.map(item => languages.add(item.language))
+
+  res.json({
+    success: true,
+    data: [...languages]
+  })
+})
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
@@ -117,8 +108,8 @@ app.get('/api/health', (req, res) => {
     message: 'API is running',
     timestamp: new Date().toISOString(),
     currentCollection: {
-      language: 'az',
-      length: 5,
+      // language: 'az',
+      // length: 5,
       count: wordCollection.length
     }
   });
@@ -146,7 +137,7 @@ app.get('/', (req, res) => {
       'GET /api/health': 'Health check'
     },
     availableLanguages: ['az', 'en'],
-    availableLengths: [5]
+    availableLengths: [5, 6]
   });
 });
 
