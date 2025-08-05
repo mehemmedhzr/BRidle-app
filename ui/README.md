@@ -1,31 +1,90 @@
-# 🧩 BRiddle
+# BRiddle - Wordle Game
 
-**BRiddle** is a Wordle-inspired word guessing game built with **React**, **TypeScript**, and **Tailwind CSS**. Try to guess the hidden 5-letter word in just 6 attempts. Get visual feedback on your guesses, and enjoy a clean, responsive UI with real-time interaction.
+A multi-language Wordle game built with React, TypeScript, and Node.js.
 
-## 🎮 Features
+## Features
 
-- ✅ Wordle-style gameplay
-- 🎹 Keyboard and on-screen input support
-- 🎨 Color-coded tile feedback (green/yellow/gray)
-- 🚫 Wrong letters struck through on keyboard
-- 🕹 Shake animation for invalid attempts
-- 🔔 Toast notifications for game status (win/lose/incomplete)
-- 📱 Mobile responsive
+- **Multi-language Support**: Currently supports Azerbaijani (AZ) and English (EN)
+- **Settings Menu**: Language selection and future game options
+- **Responsive Design**: Works on desktop and mobile devices
+- **Virtual Keyboard**: Language-specific keyboard layouts
+- **Game Logic**: Complete Wordle game mechanics with color-coded feedback
 
-## 🛠 Tech Stack
+## Project Structure
 
-- [React](https://reactjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Sonner](https://sonner.emilkowal.dev/) (toast notifications)
-- [Lucide React](https://lucide.dev/) (icons)
+### Frontend (`ui/`)
 
-## 🚀 Getting Started
+```
+src/
+├── components/
+│   ├── Header.tsx          # Game title and header
+│   ├── GameBoard.tsx       # Game grid and tile logic
+│   ├── Keyboard.tsx        # Virtual keyboard component
+│   └── Settings.tsx        # Settings modal with language selection
+├── App.tsx                 # Main game logic and state management
+└── index.css              # Global styles and animations
+```
 
-Clone the repository and install dependencies:
+### Backend (`server/`)
+
+```
+data/
+├── languages/
+│   ├── index.js           # Language management and exports
+│   ├── az.js             # Azerbaijani words and keyboard
+│   └── en.js             # English words and keyboard
+└── words.js              # Main data exports
+```
+
+## Components
+
+### Header
+- Displays the game title "BRiddle"
+- Clean, minimal design
+
+### GameBoard
+- Renders the 6x5 game grid
+- Handles tile color logic (green, yellow, gray)
+- Shows current guess and previous guesses
+- Includes shake animation for invalid inputs
+
+### Keyboard
+- Virtual keyboard with language-specific layouts
+- Visual feedback for used letters
+- Enter and Backspace functionality
+
+### Settings
+- Modal-based settings menu
+- Language selection dropdown
+- Placeholder for future features (difficulty, word length)
+
+## API Endpoints
+
+- `GET /api/words/random/word/:lang` - Get random word for language
+- `GET /api/collections/languages` - Get available languages
+- `GET /api/collections` - Get all available collections
+
+## Future Features
+
+- Difficulty settings (Easy, Medium, Hard)
+- Word length options (4, 5, 6 letters)
+- Statistics tracking
+- Dark mode toggle
+- Sound effects
+
+## Development
 
 ```bash
-git clone https://github.com/mehemmedhzr/briddle.git
-cd briddle
-npm install
-npm run dev
+# Start frontend
+cd ui && npm run dev
+
+# Start backend
+cd server && npm start
+```
+
+## Technologies Used
+
+- **Frontend**: React, TypeScript, Tailwind CSS, Vite
+- **Backend**: Node.js, Express
+- **Icons**: Lucide React
+- **Notifications**: Sonner

@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getWordCollection, getAvailableCollections } from './data/words.js';
+import { getWordCollection, getAvailableCollections, getKeyboardLayout } from './data/words.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -9,7 +9,6 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Get word collection (default: Azerbaijani 5-letter words)
 let wordCollection = getWordCollection('az', 5);
 
 // GET all words
@@ -51,7 +50,8 @@ app.get('/api/words/random/word/:lang', (req, res) => {
     success: true,
     data: {
       word: randomWord.word,
-      id: randomWord.id
+      id: randomWord.id,
+      keyboard: getKeyboardLayout(language)
     }
   });
 });
