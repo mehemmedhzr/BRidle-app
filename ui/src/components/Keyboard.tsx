@@ -9,10 +9,11 @@ interface KeyboardLetters {
 interface KeyboardProps {
   keyboardLetters: KeyboardLetters;
   wrongLetter: string[];
+  correctLetter: string[];
   onButtonClick: (key: string) => void;
 }
 
-export default function Keyboard({ keyboardLetters, wrongLetter, onButtonClick }: KeyboardProps) {
+export default function Keyboard({ keyboardLetters, wrongLetter, correctLetter, onButtonClick }: KeyboardProps) {
   return (
     <div className="flex justify-center gap-2 flex-col mt-4">
       <div className="flex justify-center gap-1 md:gap-2 flex-wrap">
@@ -20,7 +21,7 @@ export default function Keyboard({ keyboardLetters, wrongLetter, onButtonClick }
           <button 
             onClick={() => onButtonClick(letter)} 
             key={letter} 
-            className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-6.5 md:w-10 h-10 md:h-14 text-xs md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA]`}
+            className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} ${correctLetter.includes(letter) ? 'bg-[#6AAA64] text-white' : 'bg-gray-200'} w-6.5 md:w-10 h-10 md:h-14 text-xs md:text-md flex items-center justify-center text-black border border-[#D3D6DA]`}
           >
             {letter}
           </button>
@@ -32,7 +33,7 @@ export default function Keyboard({ keyboardLetters, wrongLetter, onButtonClick }
           <button 
             onClick={() => onButtonClick(letter)} 
             key={letter} 
-            className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-6.5 md:w-10 h-10 md:h-14 text-xs md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA]`}
+            className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} ${correctLetter.includes(letter) ? 'bg-[#6AAA64] text-white' : 'bg-gray-200'} w-6.5 md:w-10 h-10 md:h-14 text-xs md:text-md flex items-center justify-center text-black border border-[#D3D6DA]`}
           >
             {letter}
           </button>
@@ -50,7 +51,7 @@ export default function Keyboard({ keyboardLetters, wrongLetter, onButtonClick }
           <button 
             onClick={() => onButtonClick(letter)} 
             key={letter} 
-            className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} w-6.5 md:w-10 h-10 md:h-14 text-xs md:text-md flex items-center justify-center bg-gray-200 text-black border border-[#D3D6DA]`}
+            className={`${wrongLetter.includes(letter) ? 'line-through opacity-50' : ''} ${correctLetter.includes(letter) ? 'bg-[#6AAA64] text-white' : 'bg-gray-200'} w-6.5 md:w-10 h-10 md:h-14 text-xs md:text-md flex items-center justify-center text-black border border-[#D3D6DA]`}
           >
             {letter}
           </button>

@@ -1,35 +1,21 @@
 interface GameBoardProps {
-  solution: string;
+  letterRepresentation: string[][];
   guesses: string[];
   currentGuess: string;
   shake: boolean;
   chosenLanguage: string;
+  wordLength: number;
 }
 
-export default function GameBoard({ solution, guesses, currentGuess, shake, chosenLanguage }: GameBoardProps) {
+export default function GameBoard({ letterRepresentation, guesses, currentGuess, shake, chosenLanguage, wordLength }: GameBoardProps) {
   const MAX_ATTEMPTS = 6;
 
   const getTileStatus = (index: number, pIndex: number) => {
     if (guesses.length > 0 && pIndex < guesses.length) {
-      if (guesses[pIndex][index] === solution[index]) {
+      if (letterRepresentation[pIndex][index] === 'correct') {
         return 'bg-[#6AAA64] text-white';
-      } else if (solution.includes(guesses[pIndex][index])) {
-        const guessArray = guesses[pIndex].split('');
-
-        const solutionLngth = solution
-          .split('')
-          .filter((char, i) => char !== guessArray[i] && guessArray.includes(char))
-          .length;
-
-        const guessIndexes = guessArray
-          .map((char, i) => char !== solution[i] && solution.includes(char) ? i : null)
-          .filter(index => index !== null);
-
-        if (guessIndexes.indexOf(index) < solutionLngth) {
+      } else if (letterRepresentation[pIndex][index] === 'misplaced') {
           return 'bg-[#C9B458] text-white';
-        }
-
-        return 'bg-[#787C7E] text-white';
       } else {
         return 'bg-[#787C7E] text-white';
       }
@@ -45,7 +31,7 @@ export default function GameBoard({ solution, guesses, currentGuess, shake, chos
 
         return (
           <div key={index} className={`flex gap-2 justify-center ${shake ? 'shake' : ''}`}>
-            {[...Array(solution.length)].map((_, index) => (
+            {[...Array(wordLength)].map((_, index) => (
               <div 
                 key={index} 
                 className={`w-10 h-10 flex items-center justify-center font-bold text-black border border-[#D3D6DA] ${getTileStatus(index, parentIndex)}`}
