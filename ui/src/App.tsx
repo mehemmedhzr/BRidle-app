@@ -5,6 +5,7 @@ import Header from './components/Header';
 import GameBoard from './components/GameBoard';
 import Keyboard from './components/Keyboard';
 import Settings from './components/Settings';
+import GameOverModal from './components/GameOverModal';
 
 const MAX_ATTEMPTS = 6;
 const WORD_LENGTH = 5;
@@ -52,7 +53,6 @@ const checkOrGenerateWord = async (currentGuess: string, guesses: string[]): Pro
 
 function App() {
 
-  const [solution, setSolution] = useState<string[]>([]);
   const [letterRepresentation, setLetterRepresentation] = useState<string[][]>([]);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>('');
@@ -60,14 +60,16 @@ function App() {
   const [shake, setShake] = useState<boolean>(false);
   const [wrongLetter, setWrongLetter] = useState<string[]>([]);
   const [correctLetter, setCorrectLetter] = useState<string[]>([]);
-  // const [flip, setFlip] = useState<number[]>([]);
+  const [misplacedLetter, setMisplacedLetter] = useState<string[]>([]);
   const [wordLanguages, setWordLanguages] = useState<string[]>([]);
   const [chosenLanguage, setChosenLanguage] = useState<string>('az');
   const [keyboardLetters, setKeyboardLetters] = useState<KeyboardLetters>({});
+  const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
+  const [gameResult, setGameResult] = useState<'won' | 'lost' | null>(null);
 
   const processInput = useCallback((inputKey: string) => {
     if (gameOver) {
-      setGameOver(false);
+      return;
     }
   
     if (inputKey.length === 1 && regex.test(inputKey)) {
@@ -98,13 +100,13 @@ function App() {
           if ((newResponse.length && newResponse.every(item => item === 'correct')) || newGuesses.length === MAX_ATTEMPTS) {
             if (newResponse.length && newResponse.every(item => item === 'correct')) {
               toast.success('You won!');
+              setGameResult('won');
             } else {
               toast.error('You lost!');
+              setGameResult('lost');
             }
-
-            setGuesses([]);
-            setWrongLetter([]);
             setGameOver(true);
+            setShowGameOverModal(true);
             return;
           }
           return;
@@ -171,27 +173,25 @@ function App() {
       const lastGuess = guesses[guesses.length - 1];
       let wrongLetters: string[] = [];
       const correctLetters: string[] = [];
-      
-      lastGuess.split('').forEach((letter, index) => {
-        // if (letter !== solution[index] && !solution.includes(letter)) {
-        //   wrongLetters.push(letter.toLocaleUpperCase(chosenLanguage));
-        // }
+      const misplacedLetters: string[] = [];
 
+      lastGuess.split('').forEach((letter, index) => {
         if(letterRepresentation[letterRepresentation.length - 1][index] === 'correct') {
           correctLetters.push(letter.toLocaleUpperCase(chosenLanguage));
+        }
+
+        if(letterRepresentation[letterRepresentation.length - 1][index] === 'misplaced') {
+          misplacedLetters.push(letter.toLocaleUpperCase(chosenLanguage));
         }
 
         if(letterRepresentation[letterRepresentation.length - 1][index] === 'wrong') {
           wrongLetters.push(letter.toLocaleUpperCase(chosenLanguage));
         }
-
       });
-      
-
 
       if(wrongLetters.length > 0) {
         wrongLetters = wrongLetters
-          .filter(letter => !correctLetter.includes(letter) && !correctLetters.includes(letter));
+          .filter(letter => !correctLetter.includes(letter) && !correctLetters.includes(letter) && !misplacedLetter.includes(letter) && !misplacedLetters.includes(letter));
       }
 
       if (wrongLetters.length > 0) {
@@ -201,6 +201,10 @@ function App() {
       if (correctLetters.length > 0) {
         setCorrectLetter(prev => [...new Set([...prev, ...correctLetters])]);
       }
+
+      if (misplacedLetters.length > 0) {
+        setMisplacedLetter(prev => [...new Set([...prev, ...misplacedLetters])]);
+      }
     }
   }, [guesses, chosenLanguage, letterRepresentation]);
 
@@ -209,11 +213,32 @@ function App() {
     setChosenLanguage(e.target.value)
   }
 
+  // HANDLE NEW GAME
+  const handleNewGame = () => {
+    setGuesses([]);
+    setWrongLetter([]);
+    setCorrectLetter([]);
+    setMisplacedLetter([]);
+    setLetterRepresentation([]);
+    setCurrentGuess('');
+    setGameOver(false);
+    setShowGameOverModal(false);
+    setGameResult(null);
+    
+    // Generate new word
+    checkOrGenerateWord('', []);
+  }
+
+  // HANDLE CLOSE MODAL
+  const handleCloseModal = () => {
+    setShowGameOverModal(false);
+  }
+
   return (
     <>
       <div className="bg-white">
         <div className="max-w-md md:max-w-xl mx-auto">
-          <Header />
+          <Header onNewGame={handleNewGame} />
 
           <GameBoard 
             letterRepresentation={letterRepresentation}
@@ -237,6 +262,13 @@ function App() {
         chosenLanguage={chosenLanguage}
         wordLanguages={wordLanguages}
         onLanguageChange={handleLanguageChange}
+      />
+
+      <GameOverModal 
+        isOpen={showGameOverModal}
+        isWon={gameResult === 'won'}
+        onNewGame={handleNewGame}
+        onClose={handleCloseModal}
       />
 
       <Toaster position="top-center" richColors />

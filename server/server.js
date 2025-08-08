@@ -46,8 +46,8 @@ app.post('/api/check-word', (req, res) => {
   const { word, generateRandom } = req.body;
   if (generateRandom && word.length === 0) {
     randomIndex = Math.floor(Math.random() * wordCollection.length);
-    // randomWord = wordCollection[randomIndex];
-    randomWord = { id: 632, word: 'imdad', difficulty: 'hard' };
+    randomWord = wordCollection[randomIndex];
+    // randomWord = { id: 632, word: 'imdad', difficulty: 'hard' };
     console.log(word, 'word')
     console.log(randomWord, 'randomWord')
     return res.status(200).json({
@@ -64,50 +64,29 @@ app.post('/api/check-word', (req, res) => {
   console.log(randomWord)
 
   if(word && word.length === 5){
-    const position = [];
-    for(let i = 0; i < word.length; i++){
-      if(word[i] === randomWord.word[i]){
-        position.push('correct');
+    const guess = word;
+    const answer = randomWord.word;
+    const position = Array(guess.length).fill('wrong');
+    const lettersUsed = Array(answer.length).fill(false);
+
+    for(let i = 0; i < guess.length; i++){
+      if(guess[i] === answer[i]){
+        position[i] = 'correct';
+        lettersUsed[i] = true;
+      }
+    }
+
+    for(let i = 0; i < guess.length; i++){
+      if(position[i] === 'correct'){
         continue;
-      } else if(randomWord.word.includes(word[i])){
-        const wordArray = word.split('');
+      }
 
-        // const misplacedCount = randomWord.word
-        //   .split('')
-        //   .filter((char, i) => char !== wordArray[i] && wordArray.includes(char))
-        //   .length;
-        const misplacedCount = wordArray
-          .filter((char, i) => char !== randomWord.word[i] && randomWord.word.includes(char))
-          .length;
-
-        // const misplacedIndexes = wordArray
-        //   .map((char, i) => char !== randomWord.word[i] && randomWord.word.includes(char) ? i : null)
-        //   .filter(index => index !== null);
-
-        const misplacedLetters = wordArray
-          .filter((char, i) => char !== randomWord.word[i] && randomWord.word.includes(char));
-
-        const correctLetters = wordArray
-          .filter((char, i) => char === randomWord.word[i]);
-
-        if(correctLetters.length > 0 && misplacedLetters.length > 0){
-          const misplacedLetters2 = misplacedLetters.filter(letter => !correctLetters.includes(letter));
-          console.log(misplacedLetters2, 'misplacedLetters2')
-          console.log(misplacedLetters2.indexOf(word[i]))
-          if(misplacedLetters2.length > 0 && misplacedLetters2.indexOf(word[i]) < misplacedCount){
-            position.push('misplaced');
-            continue;
-          }
+      for(let j = 0; j < answer.length; j++){
+        if(guess[i] === answer[j] && !lettersUsed[j]){
+          position[i] = 'misplaced';
+          lettersUsed[j] = true;
+          break;
         }
-
-        // if (misplacedIndexes.indexOf(i) < misplacedCount) {
-        //   position.push('misplaced');
-        //   continue;
-        // }
-
-        position.push('wrong');
-      } else {
-        position.push('wrong');
       }
     }
 
@@ -145,8 +124,6 @@ app.get('/api/words/random/word/:lang', (req, res) => {
     }
   });
 });
-
-
 
 // GET keyboard layout
 app.get('/api/keyboard/:lang', (req, res) => {
